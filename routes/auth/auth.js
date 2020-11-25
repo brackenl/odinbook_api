@@ -38,7 +38,7 @@ router.post(
       return res.status(400).json({ errors: result.array() });
     }
 
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, profilePicUrl } = req.body;
     const hashedPassword = generatePassword(password);
 
     const user = new User({
@@ -47,6 +47,9 @@ router.post(
       email: email,
       password: hashedPassword,
       posts: [],
+      profilePicUrl: profilePicUrl ? profilePicUrl : "",
+      friends: [],
+      friendRequests: [],
     });
 
     try {

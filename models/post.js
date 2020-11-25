@@ -8,7 +8,7 @@ var PostSchema = new Schema({
   content: { type: String, required: true },
   timestamp: { type: Date, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
-  imgUrl: { type: Date, required: false },
+  imgUrl: { type: String, required: false },
   likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 

@@ -36,6 +36,7 @@ router.post(
         comment: comment,
         timestamp: new Date(),
         post: req.params.postId,
+        likes: [],
       });
 
       console.log(newComment);
@@ -97,6 +98,47 @@ router.put(
   }
 );
 
+// PUT toggle like post
+
+router.put(
+  "/:commentId/like",
+
+  passport.authenticate("jwt", { session: false }),
+  getTokenData,
+
+  async (req, res, next) => {
+    try {
+      const relComment = await Comment.findById(req.params.commentId);
+
+      if (!relComment) {
+        return res.status(404).json({ message: "Comment not found" });
+      }
+
+      if (relComment.likes.includes(req.payload.id)) {
+        const likesArray = [...relComment.likes];
+        const filteredLikesArray = likesArray.filter(
+          (userId) => userId != req.payload.id
+        );
+        relComment.likes = filteredLikesArray;
+        const updatedComment = await relComment.save();
+
+        return res
+          .status(201)
+          .json({ message: "Comment unliked", comment: updatedComment });
+      }
+
+      relComment.likes.push(req.payload.id);
+      const updatedComment = await relComment.save();
+
+      return res
+        .status(201)
+        .json({ message: "Comment liked", comment: updatedComment });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
 // DELETE comment
 
 router.delete(
@@ -123,12 +165,10 @@ router.delete(
         req.params.commentId
       );
       if (deletedComment) {
-        return res
-          .status(200)
-          .json({
-            message: "Successfully deleted comment",
-            comment: deletedComment,
-          });
+        return res.status(200).json({
+          message: "Successfully deleted comment",
+          comment: deletedComment,
+        });
       }
     } catch (e) {
       console.log(e);

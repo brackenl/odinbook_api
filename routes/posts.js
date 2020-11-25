@@ -38,7 +38,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// POST new post
+// POST new post // NEED TO UPDATE FOR IMAGE UPLOAD
 
 router.post(
   "/",
@@ -63,6 +63,8 @@ router.post(
         author: req.payload.id,
         content: content,
         timestamp: new Date(),
+        comment: [],
+        likes: [],
       });
       const savedPost = await newPost.save();
       if (savedPost) {
@@ -76,7 +78,7 @@ router.post(
   }
 );
 
-// PUT update post
+// PUT update post content
 
 router.put(
   "/:postId",
@@ -113,6 +115,45 @@ router.put(
       return res
         .status(201)
         .json({ message: "Succesfully updated", post: updatedPost });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+// PUT toggle like post
+
+router.put(
+  "/:postId/like",
+
+  passport.authenticate("jwt", { session: false }),
+  getTokenData,
+
+  async (req, res, next) => {
+    try {
+      const relPost = await Post.findById(req.params.postId);
+
+      if (!relPost) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      if (relPost.likes.includes(req.payload.id)) {
+        const likesArray = [...relPost.likes];
+        const filteredLikesArray = likesArray.filter(
+          (userId) => userId != req.payload.id
+        );
+        relPost.likes = filteredLikesArray;
+        const updatedPost = await relPost.save();
+
+        return res
+          .status(201)
+          .json({ message: "Post unliked", post: updatedPost });
+      }
+
+      relPost.likes.push(req.payload.id);
+      const updatedPost = await relPost.save();
+
+      return res.status(201).json({ message: "Post liked", post: updatedPost });
     } catch (e) {
       console.log(e);
     }
