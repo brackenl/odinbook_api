@@ -56,12 +56,13 @@ router.post(
       await user.save();
       const tokenObj = issueJWT(user);
 
-      return res.status(200).json({
+      return res.status(201).json({
         message: "Sign up successful",
         token: tokenObj,
         user: {
           name: `${user.first_name} ${user.last_name}`,
           email: user.email,
+          id: user._id,
         },
       });
     } catch (err) {
