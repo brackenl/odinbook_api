@@ -11,6 +11,8 @@ var UserSchema = new Schema({
   password: { type: String },
   profilePicUrl: { type: String },
   posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+  friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   // comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 

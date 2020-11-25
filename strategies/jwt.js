@@ -10,7 +10,7 @@ opts.secretOrKey = process.env.JWT_SECRET;
 // opts.audience = "yoursite.net";
 
 module.exports = new JwtStrategy(opts, function (jwt_payload, done) {
-  User.findOne({ _id: jwt_payload.sub }, function (err, user) {
+  User.findOne({ _id: jwt_payload.id }, function (err, user) {
     if (err) {
       return done(err, false);
     }

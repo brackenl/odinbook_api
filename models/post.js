@@ -5,11 +5,11 @@ var Schema = mongoose.Schema;
 
 var PostSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: "User" },
-  title: { type: String, required: true, maxlength: 50 },
   content: { type: String, required: true },
-  timestamp: { type: Date, required: false },
-  published: { type: Boolean, required: true },
+  timestamp: { type: Date, required: true },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+  imgUrl: { type: Date, required: false },
+  likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 PostSchema.virtual("formatted_time").get(function () {

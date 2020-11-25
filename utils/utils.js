@@ -6,7 +6,7 @@ const issueJWT = (user) => {
   const expiresIn = "1d";
 
   const payload = {
-    sub: _id,
+    id: _id,
     iat: Date.now(),
   };
 

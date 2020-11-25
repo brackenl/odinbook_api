@@ -9,8 +9,10 @@ const facebookStrategy = require("../strategies/facebookAuth");
 passport.use(facebookStrategy);
 
 var authRouter = require("./auth/auth");
+var postsRouter = require("./posts");
 
 router.use("/auth", authRouter);
+router.use("/posts", postsRouter);
 
 router.get("/", function (req, res, next) {
   console.log(req);
