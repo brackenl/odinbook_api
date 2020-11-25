@@ -1,9 +1,32 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+// remove
+const passport = require("passport");
+const jwtStrategy = require("../strategies/jwt");
+passport.use(jwtStrategy);
+const facebookStrategy = require("../strategies/facebookAuth");
+passport.use(facebookStrategy);
+
+var authRouter = require("./auth/auth");
+
+router.use("/auth", authRouter);
+
+router.get("/", function (req, res, next) {
+  console.log(req);
+  res.render("index", { title: "Express" });
 });
+
+// ROUTE FOR TESTING AUTH STRATEGIES
+router.get(
+  "/protected",
+  passport.authenticate(["jwt", "facebook"], { session: false }),
+  (req, res, next) => {
+    res.status(200).json({
+      success: true,
+      msg: "You are successfully authenticated to this route!",
+    });
+  }
+);
 
 module.exports = router;
