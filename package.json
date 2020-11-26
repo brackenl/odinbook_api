@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "serverstart": "DEBUG=odinbook-api:* npm run devstart",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --detectOpenHandles"
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --detectOpenHandles  --forceExit"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
