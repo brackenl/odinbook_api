@@ -17,12 +17,26 @@ const shuffleArray = (relArr) => {
   return array;
 };
 
+const generateSpecificUser = () => {
+  const user = new User({
+    first_name: "David",
+    last_name: "Smith",
+    email: "dsmith@example.com",
+    password: "password", // faker.internet.password(),
+    profilePicUrl: faker.image.imageUrl(),
+    posts: [],
+    friends: [],
+    friendRequests: [],
+  });
+  users.push(user);
+};
+
 const generateUser = () => {
   const user = new User({
     first_name: faker.name.firstName(),
     last_name: faker.name.lastName(),
     email: faker.internet.email(),
-    password: faker.internet.password(),
+    password: "password", // faker.internet.password(),
     profilePicUrl: faker.image.imageUrl(),
     posts: [],
     friends: [],
@@ -33,13 +47,24 @@ const generateUser = () => {
 
 const generateFriends = () => {
   users.forEach((user) => {
-    const shuffledUsers = shuffleArray(users);
-    // console.log("shuffled users: ", shuffledUsers);
-    // const randIndex = Math.floor(Math.random() * shuffledUsers.length);
-    // console.log("randIndex: ", randIndex);
+    // console.log("user: ", user._id);
+    const usersExcCurrentUser = users.filter((item) => item._id != user._id);
+    const shuffledUsers = shuffleArray(usersExcCurrentUser);
     const randSlicedUsers = shuffledUsers.slice(0, 1);
-    // console.log("randSlicedUsers: ", randSlicedUsers);
+    // console.log("sliced random users: ", randSlicedUsers);
+
     user.friends = randSlicedUsers.map((user) => user._id);
+    // console.log("user's friends: ", user.friends);
+
+    randSlicedUsers.forEach((friendedUser) => {
+      if (!friendedUser.friends.includes(user._id)) {
+        const relIndex = users.findIndex(
+          (user) => user._id == friendedUser._id
+        );
+        users[relIndex].friends.push(user._id);
+        // console.log("friended user's friends: ", users[relIndex].friends);
+      }
+    });
   });
 };
 
@@ -99,7 +124,9 @@ const addLikesToComments = () => {
 };
 
 const seedDB = async () => {
-  for (let i = 0; i < 3; i++) {
+  generateSpecificUser();
+
+  for (let i = 0; i < 2; i++) {
     generateUser();
   }
 
@@ -157,7 +184,7 @@ const seedDB = async () => {
     }
   });
   */
-
+  // console.log(users);
   return { users, posts, comments };
 };
 

@@ -4,10 +4,10 @@ var router = express.Router({ mergeParams: true });
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 
-var getTokenData = require("../utils/getTokenData");
+var getTokenData = require("../../utils/getTokenData");
 
-var Post = require("../models/post");
-var Comment = require("../models/comment");
+var Post = require("../../models/post");
+var Comment = require("../../models/comment");
 
 // POST new comment
 
@@ -21,9 +21,6 @@ router.post(
 
   async (req, res, next) => {
     const { comment } = req.body;
-    console.log(req.params);
-    console.log(req.payload);
-    console.log(comment);
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -39,7 +36,6 @@ router.post(
         likes: [],
       });
 
-      console.log(newComment);
       const savedComment = await newComment.save();
 
       const relPost = await Post.findById(req.params.postId);

@@ -4,10 +4,10 @@ var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 
-var getTokenData = require("../utils/getTokenData");
+var getTokenData = require("../../utils/getTokenData");
 var commentRouter = require("./comments");
 
-var Post = require("../models/post");
+var Post = require("../../models/post");
 
 router.use("/:postId/comments", commentRouter);
 
@@ -25,7 +25,6 @@ router.get("/", async (req, res, next) => {
 // GET single post
 
 router.get("/:id", async (req, res, next) => {
-  console.log(req.params.id);
   try {
     const post = await Post.findById(req.params.id).populate("comments").exec();
     if (post) {
@@ -50,8 +49,6 @@ router.post(
 
   async (req, res, next) => {
     const { content } = req.body;
-    console.log(req.payload);
-    console.log(content);
 
     const result = validationResult(req);
     if (!result.isEmpty()) {

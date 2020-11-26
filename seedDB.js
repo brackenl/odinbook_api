@@ -36,13 +36,24 @@ const generateUser = () => {
 
 const generateFriends = () => {
   users.forEach((user) => {
-    const shuffledUsers = shuffleArray(users);
-    // console.log("shuffled users: ", shuffledUsers);
-    const randIndex = Math.floor(Math.random() * shuffledUsers.length);
-    // console.log("randIndex: ", randIndex);
-    const randSlicedUsers = shuffledUsers.slice(0, randIndex);
-    // console.log("randSlicedUsers: ", randSlicedUsers);
+    console.log("user: ", user._id);
+    const usersExcCurrentUser = users.filter((item) => item._id != user._id);
+    const shuffledUsers = shuffleArray(usersExcCurrentUser);
+    const randSlicedUsers = shuffledUsers.slice(0, 1);
+    console.log("sliced random users: ", randSlicedUsers);
+
     user.friends = randSlicedUsers.map((user) => user._id);
+    console.log("user's friends: ", user.friends);
+
+    randSlicedUsers.forEach((friendedUser) => {
+      if (!friendedUser.friends.includes(user._id)) {
+        const relIndex = users.findIndex(
+          (user) => user._id == friendedUser._id
+        );
+        users[relIndex].friends.push(user._id);
+        console.log("friended user's friends: ", users[relIndex].friends);
+      }
+    });
   });
 };
 

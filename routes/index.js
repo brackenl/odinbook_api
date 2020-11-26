@@ -9,13 +9,14 @@ const facebookStrategy = require("../strategies/facebookAuth");
 passport.use(facebookStrategy);
 
 var authRouter = require("./auth/auth");
-var postsRouter = require("./posts");
+var postsRouter = require("./posts/posts");
+var usersRouter = require("./users/users");
 
 router.use("/auth", authRouter);
 router.use("/posts", postsRouter);
+router.use("/users", usersRouter);
 
 router.get("/", function (req, res, next) {
-  console.log(req);
   res.render("index", { title: "Express" });
 });
 

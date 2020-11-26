@@ -31,8 +31,6 @@ router.post(
   body("password", "Password required").trim().isLength({ min: 1 }).escape(),
 
   async (req, res, next) => {
-    console.log(req.body);
-
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });
@@ -80,7 +78,6 @@ router.post(
   body("password", "Password required").trim().isLength({ min: 1 }).escape(),
 
   async (req, res, next) => {
-    console.log(req.body);
     const { email, password } = req.body;
     try {
       const relUser = await User.findOne({ email });
@@ -95,6 +92,7 @@ router.post(
             user: {
               name: `${relUser.first_name} ${relUser.last_name}`,
               email: relUser.email,
+              id: relUser._id,
             },
           });
         } else {
