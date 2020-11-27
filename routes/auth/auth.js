@@ -58,9 +58,12 @@ router.post(
         message: "Sign up successful",
         token: tokenObj,
         user: {
-          name: `${user.first_name} ${user.last_name}`,
+          // name: `${user.first_name} ${user.last_name}`,
+          first_name: user.first_name,
+          last_name: user.last_name,
           email: user.email,
           id: user._id,
+          profilePicUrl: user.profilePicUrl ? user.profilePicUrl : "",
         },
       });
     } catch (err) {
@@ -90,9 +93,12 @@ router.post(
             message: "Log in successful",
             token: tokenObj,
             user: {
-              name: `${relUser.first_name} ${relUser.last_name}`,
+              // name: `${relUser.first_name} ${relUser.last_name}`,
+              first_name: relUser.first_name,
+              last_name: relUser.last_name,
               email: relUser.email,
               id: relUser._id,
+              profilePicUrl: relUser.profilePicUrl ? relUser.profilePicUrl : "",
             },
           });
         } else {

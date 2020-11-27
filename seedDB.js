@@ -45,13 +45,11 @@ const generateFriends = () => {
     user.friends = randSlicedUsers.map((user) => user._id);
     console.log("user's friends: ", user.friends);
 
-    randSlicedUsers.forEach((friendedUser) => {
-      if (!friendedUser.friends.includes(user._id)) {
-        const relIndex = users.findIndex(
-          (user) => user._id == friendedUser._id
-        );
+    user.friends.forEach((friendedUser) => {
+      const relIndex = users.findIndex((user) => user._id == friendedUser);
+
+      if (!users[relIndex].friends.includes(user._id)) {
         users[relIndex].friends.push(user._id);
-        console.log("friended user's friends: ", users[relIndex].friends);
       }
     });
   });
@@ -93,7 +91,7 @@ const addLikesToPosts = () => {
 const addCommentsToPosts = () => {
   posts.forEach((post) => {
     post.author.friends.forEach((friend) => {
-      if (Math.random() > 0.9) {
+      if (Math.random() > 0.7) {
         const comment = new Comment({
           user: friend._id,
           comment: faker.lorem.sentence(),
@@ -122,7 +120,7 @@ const addLikesToComments = () => {
 };
 
 const seedDB = () => {
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 100; i++) {
     generateUser();
   }
 

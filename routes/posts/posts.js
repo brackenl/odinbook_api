@@ -15,7 +15,7 @@ router.use("/:postId/comments", commentRouter);
 
 router.get("/", async (req, res, next) => {
   try {
-    const posts = await Post.find({});
+    const posts = await Post.find({}).populate("author");
     return res.status(200).json({ posts: posts });
   } catch (err) {
     console.log(err);
@@ -64,10 +64,11 @@ router.post(
         likes: [],
       });
       const savedPost = await newPost.save();
-      if (savedPost) {
+      const relPost = await Post.findById(savedPost._id).populate("author");
+      if (relPost) {
         return res
           .status(201)
-          .json({ message: "Succesfully posted", post: savedPost });
+          .json({ message: "Succesfully posted", post: relPost });
       }
     } catch (e) {
       console.log(e);

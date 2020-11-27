@@ -118,3 +118,6 @@ dist
 # https
 sslcert/
 *.pem
+
+# misc
+friendUpdate.js

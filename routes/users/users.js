@@ -40,6 +40,7 @@ router.get(
     try {
       const user = await User.findById(req.params.userId)
         .populate("friends")
+        .populate("friendRequests")
         .populate("posts");
       res.status(200).json({ user: user });
     } catch (err) {
