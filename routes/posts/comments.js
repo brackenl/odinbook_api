@@ -41,9 +41,13 @@ router.post(
       const relPost = await Post.findById(req.params.postId);
       relPost.comments.push(savedComment);
       await relPost.save();
+
+      const populatedComment = await Comment.findById(
+        savedComment._id
+      ).populate("user");
       return res
         .status(201)
-        .json({ message: "Comment saved", comment: savedComment });
+        .json({ message: "Comment saved", comment: populatedComment });
     } catch (e) {
       console.log(e);
     }

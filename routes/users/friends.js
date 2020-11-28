@@ -56,6 +56,43 @@ router.post(
   }
 );
 
+// DELETE cancel (withdraw) friend request
+
+router.delete(
+  "/cancel",
+
+  passport.authenticate("jwt", { session: false }),
+  getTokenData,
+
+  async (req, res, next) => {
+    console.log(req.body);
+    const { relUserId } = req.body;
+
+    try {
+      const relUser = await User.findById(relUserId);
+      console.log(relUser);
+
+      // check requesting user is not the same as the relevant user
+      if (!relUser.friendRequests.includes(req.payload.id)) {
+        return res.status(404).json({ message: "Friend request not found." });
+      }
+
+      // delete the request
+      const updatedRequests = relUser.friendRequests.filter(
+        (user) => user != req.payload.id
+      );
+      relUser.friendRequests = updatedRequests;
+      const updatedUser = await relUser.save();
+
+      return res
+        .status(200)
+        .json({ message: "Friend request deleted", user: updatedUser });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 // PUT accept friend request
 router.put(
   "/accept",
@@ -92,6 +129,72 @@ router.put(
       return res
         .status(201)
         .json({ message: "Friend request accepted", user: updatedUser });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// DELETE decline (reject) friend request
+
+router.delete(
+  "/decline",
+
+  passport.authenticate("jwt", { session: false }),
+  getTokenData,
+
+  async (req, res, next) => {
+    console.log(req.body);
+    const { relUserId } = req.body;
+
+    try {
+      const relUser = await User.findById(req.payload.id);
+
+      const updatedFriendReqs = relUser.friendRequests.filter(
+        (item) => item._id != relUserId
+      );
+      relUser.friendRequests = updatedFriendReqs;
+      const updatedUser = await relUser.save();
+
+      return res
+        .status(201)
+        .json({ message: "Friend request declined", user: updatedUser });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// DELETE remove friend
+router.delete(
+  "/remove",
+
+  async (req, res, next) => {
+    const { relUserId } = req.body;
+
+    try {
+      const relUser = await User.findById(relUserId);
+
+      // delete from user's friends list
+      const updatedFriends = relUser.friends.filter(
+        (item) => item._id != req.payload.id
+      );
+      relUser.friends = updatedFriends;
+      await relUser.save();
+
+      // delete from logged in user's friends list
+      const loggedInUser = await User.findById(req.payload.id);
+      const loggedInUserUpdatedFriends = loggedInUser.friends.filter(
+        (item) => item._id != req.payload.id
+      );
+      loggedInUser.friends = loggedInUserUpdatedFriends;
+      await loggedInUser.save();
+
+      return res.status(201).json({
+        message: "Friend removed",
+        user: relUser,
+        // loggedInUser: loggedInUser,
+      });
     } catch (error) {
       console.log(error);
     }

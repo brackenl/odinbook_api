@@ -15,7 +15,16 @@ router.use("/:postId/comments", commentRouter);
 
 router.get("/", async (req, res, next) => {
   try {
-    const posts = await Post.find({}).populate("author");
+    const posts = await Post.find({})
+      .populate("author")
+      .populate({
+        path: "comments",
+        model: "Comment",
+        populate: {
+          path: "user",
+          model: "User",
+        },
+      });
     return res.status(200).json({ posts: posts });
   } catch (err) {
     console.log(err);
