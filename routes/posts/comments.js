@@ -49,7 +49,7 @@ router.post(
         .status(201)
         .json({ message: "Comment saved", comment: populatedComment });
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -93,7 +93,7 @@ router.put(
         comment: updatedComment,
       });
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -134,7 +134,7 @@ router.put(
         .status(201)
         .json({ message: "Comment liked", comment: updatedComment });
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -171,7 +171,7 @@ router.delete(
         });
       }
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );

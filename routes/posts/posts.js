@@ -47,7 +47,7 @@ router.get(
 
       return res.status(200).json({ posts: posts });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );
@@ -63,7 +63,7 @@ router.get("/:id", async (req, res, next) => {
       return res.status(404).json({ message: "Post not found" });
     }
   } catch (err) {
-    console.log(err);
+    return res.status(500).json({ error: err.message });
   }
 });
 
@@ -98,7 +98,7 @@ router.post(
           .json({ message: "Succesfully posted", post: relPost });
       }
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -149,7 +149,7 @@ router.put(
           .json({ message: "Succesfully posted", post: updatedPost });
       }
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -189,7 +189,7 @@ router.put(
         .status(201)
         .json({ message: "Succesfully updated", post: updatedPost });
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -225,7 +225,7 @@ router.put(
 
       return res.status(201).json({ message: "Post liked", post: updatedPost });
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );
@@ -256,7 +256,7 @@ router.delete(
           .json({ message: "Successfully deleted", post: deletedPost });
       }
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );

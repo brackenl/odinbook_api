@@ -62,7 +62,7 @@ router.post(
         },
       });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );
@@ -102,7 +102,7 @@ router.post(
         return res.status(404).json({ message: "User not found" });
       }
     } catch (e) {
-      console.log(e);
+      return res.status(500).json({ error: e.message });
     }
   }
 );

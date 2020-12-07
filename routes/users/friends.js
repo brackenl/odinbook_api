@@ -51,7 +51,7 @@ router.post(
         .status(201)
         .json({ message: "Friend request submitted", user: updatedUser });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
@@ -88,7 +88,7 @@ router.delete(
         .status(200)
         .json({ message: "Friend request deleted", user: updatedUser });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
@@ -130,7 +130,7 @@ router.put(
         .status(201)
         .json({ message: "Friend request accepted", user: updatedUser });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
@@ -160,7 +160,7 @@ router.delete(
         .status(201)
         .json({ message: "Friend request declined", user: updatedUser });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
@@ -196,7 +196,7 @@ router.delete(
         // loggedInUser: loggedInUser,
       });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );

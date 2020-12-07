@@ -27,7 +27,7 @@ router.get(
       const users = await User.find({});
       res.status(200).json({ users: users });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );
@@ -89,7 +89,7 @@ router.get(
         .populate("posts");
       res.status(200).json({ user: user });
     } catch (err) {
-      console.log(err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );
@@ -136,7 +136,7 @@ router.put(
         user: updatedUser,
       });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
@@ -191,7 +191,7 @@ router.post(
         user: updatedUser,
       });
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   }
 );
