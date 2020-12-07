@@ -11,6 +11,9 @@ let token;
 let postId;
 let commentId;
 
+var Post = require("../models/post");
+var User = require("../models/user");
+
 beforeAll(async (done) => {
   // Clears the database and adds some testing data.
   // Jest will wait for this promise to resolve before running tests.
@@ -26,12 +29,20 @@ beforeAll(async (done) => {
     })
     .set("Accept", "application/json");
   token = res.body.token.token;
+
+  const loggedUser = await User.findById(res.body.user.id);
+  const otherUsers = await User.find({ _id: { $ne: res.body.user.id } });
+
+  for (user of otherUsers) {
+    loggedUser.friends.push(user._id);
+  }
+  await loggedUser.save();
   done();
 });
 
 describe("GET /posts", () => {
   it("should return an array of posts", async () => {
-    const res = await request(app).get("/posts");
+    const res = await request(app).get("/posts").set("Authorization", token);
     expect(res.statusCode).toEqual(200);
     expect(res.header["content-type"]).toEqual(expect.stringMatching(/json/));
     expect(res.body).toHaveProperty("posts");
@@ -45,6 +56,7 @@ describe("GET /posts/:postId", () => {
   it("should return the relevant post", async () => {
     const res = await request(app)
       .get(`/posts/${postId}`)
+      .set("Authorization", token)
       .set("Accept", "application/json");
     expect(res.statusCode).toEqual(200);
     expect(res.header["content-type"]).toEqual(expect.stringMatching(/json/));
@@ -136,6 +148,7 @@ describe("DELETE /posts/:postId/comments/:commentId", () => {
   it("GET relevant post should not include deleted comment", async () => {
     const res = await request(app)
       .get(`/posts/${postId}`)
+      .set("Authorization", token)
       .set("Accept", "application/json");
 
     const postCommentIds = res.body.post.comments.map((comment) => comment._id);
@@ -158,6 +171,7 @@ describe("DELETE /posts/:postId", () => {
   it("GET deleted post should return 404", async () => {
     const res = await request(app)
       .get(`/posts/${postId}`)
+      .set("Authorization", token)
       .set("Accept", "application/json");
     expect(res.statusCode).toEqual(404);
     expect(res.header["content-type"]).toEqual(expect.stringMatching(/json/));

@@ -5,33 +5,54 @@ const { body, validationResult } = require("express-validator");
 const passport = require("passport");
 
 var getTokenData = require("../../utils/getTokenData");
+var upload = require("../../utils/multUpload");
 var commentRouter = require("./comments");
 
 var Post = require("../../models/post");
+var User = require("../../models/user");
 
 router.use("/:postId/comments", commentRouter);
 
-// GET all posts
+router.use(passport.authenticate("jwt", { session: false }));
+router.use(getTokenData);
 
-router.get("/", async (req, res, next) => {
-  try {
-    const posts = await Post.find({})
-      .populate("author")
-      .populate({
-        path: "comments",
-        model: "Comment",
-        populate: {
-          path: "user",
-          model: "User",
-        },
-      });
-    return res.status(200).json({ posts: posts });
-  } catch (err) {
-    console.log(err);
+// GET all posts (self + friends) (10 at a time)
+
+router.get(
+  "/",
+
+  async (req, res, next) => {
+    const skip = Number(req.query.skip);
+
+    try {
+      const loggedInUser = await User.findById(req.payload.id);
+      const posts = await Post.find(
+        { author: [req.payload.id, ...loggedInUser.friends] },
+        null,
+        {
+          skip,
+          limit: 10,
+        }
+      )
+        .sort({ timestamp: "desc" })
+        .populate("author")
+        .populate({
+          path: "comments",
+          model: "Comment",
+          populate: {
+            path: "user",
+            model: "User",
+          },
+        });
+
+      return res.status(200).json({ posts: posts });
+    } catch (err) {
+      console.log(err);
+    }
   }
-});
+);
 
-// GET single post
+// GET single post (NOT USED)
 
 router.get("/:id", async (req, res, next) => {
   try {
@@ -46,13 +67,10 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// POST new post // NEED TO UPDATE FOR IMAGE UPLOAD
+// POST new post
 
 router.post(
   "/",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   body("content", "Content required").trim().isLength({ min: 1 }).escape(),
 
@@ -85,13 +103,61 @@ router.post(
   }
 );
 
-// PUT update post content
+// PUT add image to existing post
 
 router.put(
   "/:postId",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
+  body("img-file")
+    .custom((value, { req }) => {
+      if (!req.file) {
+        return "No image";
+      } else if (
+        req.file.mimetype === "image/bmp" ||
+        req.file.mimetype === "image/gif" ||
+        req.file.mimetype === "image/jpeg" ||
+        req.file.mimetype === "image/png" ||
+        req.file.mimetype === "image/tiff" ||
+        req.file.mimetype === "image/webp"
+      ) {
+        return "image"; // return "non-falsy" value to indicate valid data"
+      } else {
+        return false; // return "falsy" value to indicate invalid data
+      }
+    })
+    .withMessage("You may only submit image files."),
+
+  upload.single("img-file"),
+
+  async (req, res, next) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
+
+    try {
+      const relPost = await Post.findById(req.params.postId);
+      relPost.imgUrl = req.file
+        ? "http://localhost:3000/public/images/" + req.file.filename
+        : null;
+
+      const savedPost = await relPost.save();
+      const updatedPost = await Post.findById(savedPost._id).populate("author");
+      if (updatedPost) {
+        return res
+          .status(201)
+          .json({ message: "Succesfully posted", post: updatedPost });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+// PUT update post content
+
+router.put(
+  "/:postId",
 
   body("content", "Content required").trim().isLength({ min: 1 }).escape(),
 
@@ -133,9 +199,6 @@ router.put(
 router.put(
   "/:postId/like",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
-
   async (req, res, next) => {
     try {
       const relPost = await Post.findById(req.params.postId);
@@ -171,9 +234,6 @@ router.put(
 
 router.delete(
   "/:postId",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   async (req, res, next) => {
     try {

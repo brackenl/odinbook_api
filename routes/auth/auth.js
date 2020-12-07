@@ -2,10 +2,6 @@ var express = require("express");
 var router = express.Router();
 
 const { check, body, validationResult } = require("express-validator");
-var bcrypt = require("bcryptjs");
-
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
 
 var facebookRouter = require("./facebook");
 
@@ -58,7 +54,6 @@ router.post(
         message: "Sign up successful",
         token: tokenObj,
         user: {
-          // name: `${user.first_name} ${user.last_name}`,
           first_name: user.first_name,
           last_name: user.last_name,
           email: user.email,
@@ -83,7 +78,7 @@ router.post(
   async (req, res, next) => {
     const { email, password } = req.body;
     try {
-      const relUser = await User.findOne({ email });
+      const relUser = await User.findOne({ email }).select("+password");
       if (relUser) {
         const passwordMatch = validatePassword(password, relUser);
         if (passwordMatch) {
@@ -93,7 +88,6 @@ router.post(
             message: "Log in successful",
             token: tokenObj,
             user: {
-              // name: `${relUser.first_name} ${relUser.last_name}`,
               first_name: relUser.first_name,
               last_name: relUser.last_name,
               email: relUser.email,
