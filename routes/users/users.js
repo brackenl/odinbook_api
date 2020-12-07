@@ -45,7 +45,10 @@ router.post(
     const { firstTerm, secondTerm } = req.body;
 
     const bestMatchUser = await User.findOne({
-      $and: [{ first_name: firstTerm }, { last_name: secondTerm }],
+      $and: [
+        { first_name: { $regex: new RegExp(firstTerm, "i") } },
+        { last_name: { $regex: new RegExp(secondTerm, "i") } },
+      ],
     });
 
     if (bestMatchUser) {
@@ -56,10 +59,10 @@ router.post(
 
     const foundUser = await User.findOne({
       $or: [
-        { first_name: firstTerm },
-        { first_name: secondTerm },
-        { last_name: firstTerm },
-        { last_name: secondTerm },
+        { first_name: { $regex: new RegExp(firstTerm, "i") } },
+        { first_name: { $regex: new RegExp(secondTerm, "i") } },
+        { last_name: { $regex: new RegExp(firstTerm, "i") } },
+        { last_name: { $regex: new RegExp(secondTerm, "i") } },
       ],
     });
 
