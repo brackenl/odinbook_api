@@ -14,6 +14,7 @@ var UserSchema = new Schema({
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
   friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   // comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+  facebookId: { type: String, required: false },
 });
 
 // Apply the uniqueValidator plugin to UserSchema.

@@ -1,11 +1,17 @@
 var express = require("express");
 var router = express.Router();
 
+const facebookTokenStrategy = require("../../strategies/facebookToken");
+
 const { check, body, validationResult } = require("express-validator");
 
-var facebookRouter = require("./facebook");
+// var facebookRouter = require("./facebook");
 
 var User = require("../../models/user");
+
+//probs remove
+const passport = require("passport");
+passport.use(facebookTokenStrategy);
 
 const {
   issueJWT,
@@ -13,7 +19,25 @@ const {
   validatePassword,
 } = require("../../utils/utils");
 
-router.use("/facebook", facebookRouter);
+// router.use("/facebook", facebookRouter);
+
+router.post(
+  "/facebook/token",
+  passport.authenticate("facebook-token"),
+  (req, res) => {
+    res.status(201).json({
+      message: "FB Auth successful",
+      user: {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        id: req.user._id,
+        profilePicUrl: req.user.profilePicUrl ? req.user.profilePicUrl : "",
+        facebookId: req.user.facebookId,
+      },
+    });
+  }
+);
 
 // POST sign up
 router.post(

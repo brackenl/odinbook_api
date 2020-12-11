@@ -15,7 +15,9 @@ var User = require("../../models/user");
 
 router.use("/friends", friendsRouter);
 
-router.use(passport.authenticate("jwt", { session: false }));
+router.use(
+  passport.authenticate(["jwt", "facebook-token"], { session: false })
+);
 router.use(getTokenData);
 
 // GET all users
@@ -41,7 +43,6 @@ router.post(
   body("secondTerm").trim().escape(),
 
   async (req, res, next) => {
-    console.log(req.body);
     const { firstTerm, secondTerm } = req.body;
 
     const bestMatchUser = await User.findOne({
@@ -82,6 +83,7 @@ router.get(
   "/:userId",
 
   async (req, res, next) => {
+    console.log(req.payload, req.user);
     try {
       const user = await User.findById(req.params.userId)
         .populate("friends")
@@ -199,7 +201,6 @@ router.post(
 // DELETE user account
 
 router.delete(`/:userId`, async (req, res, next) => {
-  console.log(req.params.userId);
   if (req.params.userId !== req.payload.id) {
     return res
       .status(401)
@@ -210,7 +211,6 @@ router.delete(`/:userId`, async (req, res, next) => {
   const otherUsers = await User.find({ _id: { $ne: req.params.userId } });
 
   if (!deletedUser) {
-    console.log("not found", deletedUser);
     return res.status(404).json({ message: "User not found" });
   }
 

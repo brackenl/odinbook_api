@@ -8,21 +8,21 @@ var getTokenData = require("../../utils/getTokenData");
 
 var User = require("../../models/user");
 
+router.use(
+  passport.authenticate(["jwt", "facebook-token"], { session: false })
+);
+router.use(getTokenData);
+
 // POST make friend request
 
 router.post(
   "/req",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   async (req, res, next) => {
     const { relUserId } = req.body;
 
     try {
       const relUser = await User.findById(relUserId);
-      console.log(relUser);
-      console.log(req.payload);
 
       // check requesting user is not the same as the relevant user
       if (relUser._id == req.payload.id) {
@@ -61,16 +61,11 @@ router.post(
 router.delete(
   "/cancel",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
-
   async (req, res, next) => {
-    console.log(req.body);
     const { relUserId } = req.body;
 
     try {
       const relUser = await User.findById(relUserId);
-      console.log(relUser);
 
       // check requesting user is not the same as the relevant user
       if (!relUser.friendRequests.includes(req.payload.id)) {
@@ -96,9 +91,6 @@ router.delete(
 // PUT accept friend request
 router.put(
   "/accept",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   async (req, res, next) => {
     const { relUserId } = req.body;
@@ -140,11 +132,7 @@ router.put(
 router.delete(
   "/decline",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
-
   async (req, res, next) => {
-    console.log(req.body);
     const { relUserId } = req.body;
 
     try {

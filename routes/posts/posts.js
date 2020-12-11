@@ -13,7 +13,9 @@ var User = require("../../models/user");
 
 router.use("/:postId/comments", commentRouter);
 
-router.use(passport.authenticate("jwt", { session: false }));
+router.use(
+  passport.authenticate(["jwt", "facebook-token"], { session: false })
+);
 router.use(getTokenData);
 
 // GET all posts (self + friends) (10 at a time)

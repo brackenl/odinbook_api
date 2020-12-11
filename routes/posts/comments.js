@@ -9,13 +9,15 @@ var getTokenData = require("../../utils/getTokenData");
 var Post = require("../../models/post");
 var Comment = require("../../models/comment");
 
+router.use(
+  passport.authenticate(["jwt", "facebook-token"], { session: false })
+);
+router.use(getTokenData);
+
 // POST new comment
 
 router.post(
   "/",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   body("comment", "Comment required").trim().isLength({ min: 1 }).escape(),
 
@@ -59,9 +61,6 @@ router.post(
 router.put(
   "/:commentId",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
-
   body("comment", "Comment required").trim().isLength({ min: 1 }).escape(),
 
   async (req, res, next) => {
@@ -103,9 +102,6 @@ router.put(
 router.put(
   "/:commentId/like",
 
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
-
   async (req, res, next) => {
     try {
       const relComment = await Comment.findById(req.params.commentId);
@@ -143,9 +139,6 @@ router.put(
 
 router.delete(
   "/:commentId",
-
-  passport.authenticate("jwt", { session: false }),
-  getTokenData,
 
   async (req, res, next) => {
     try {
