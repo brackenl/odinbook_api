@@ -16,7 +16,7 @@ var User = require("../models/user");
 
 beforeAll(async (done) => {
   // Clears the database and adds some testing data.
-  // Jest will wait for this promise to resolve before running tests.
+
   const obj = await seedDB();
 
   const res = await request(app)
@@ -83,6 +83,7 @@ describe("POST /posts/", () => {
   });
 });
 
+/* 
 describe("PUT /posts/:postId", () => {
   it("should return the updated post", async () => {
     const res = await request(app)
@@ -98,6 +99,7 @@ describe("PUT /posts/:postId", () => {
     expect(res.body.post.content).toEqual("Here is the updated post");
   });
 });
+*/
 
 describe("POST /posts/:postId/comments", () => {
   it("should return the new comment", async () => {

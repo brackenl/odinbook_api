@@ -2,24 +2,26 @@ require("dotenv").config();
 var cors = require("cors");
 var express = require("express");
 var path = require("path");
-// var cookieSession = require("cookie-session");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var passport = require("passport");
-// const passportSetup = require("./config/passport-setup");
 var bodyParser = require("body-parser");
-// var session = require("express-session");
+var compression = require("compression");
 
 require("./utils/mongoConfig");
 // require("./utils/mongoConfigTesting");
 
 var indexRouter = require("./routes/index");
-// const authRoutes = require("./routes/auth/auth-routes");
 
 var app = express();
 app.use(cookieParser());
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+  })
+);
+app.use(compression());
 app.use(logger("dev"));
 app.use(bodyParser({ limit: "10mb" }));
 app.use(express.json());

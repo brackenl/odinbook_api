@@ -14,7 +14,9 @@ var User = require("../../models/user");
 router.use("/:postId/comments", commentRouter);
 
 router.use(
-  passport.authenticate(["jwt", "facebook-token"], { session: false })
+  passport.authenticate(["jwt", "facebook-token"], {
+    session: false,
+  })
 );
 router.use(getTokenData);
 
@@ -58,8 +60,20 @@ router.get(
 
 router.get("/:id", async (req, res, next) => {
   try {
+    const requestingUser = await User.findById(req.payload.id);
     const post = await Post.findById(req.params.id).populate("comments").exec();
     if (post) {
+      // Check that requesting user is permitted to view the post
+
+      if (
+        post.author != req.payload.id &&
+        !requestingUser.friends.includes(post.author)
+      ) {
+        return res.status(401).json({
+          message: "You must be friends with the author to view this post",
+        });
+      }
+      // if allowed to view, return post
       return res.status(200).json({ post: post });
     } else {
       return res.status(404).json({ message: "Post not found" });
@@ -140,7 +154,7 @@ router.put(
     try {
       const relPost = await Post.findById(req.params.postId);
       relPost.imgUrl = req.file
-        ? "http://localhost:3000/public/images/" + req.file.filename
+        ? `${process.env.BASE_URI}/public/images/` + req.file.filename
         : null;
 
       const savedPost = await relPost.save();
@@ -156,10 +170,11 @@ router.put(
   }
 );
 
-// PUT update post content
+// PUT update post content (not used)
 
+/*
 router.put(
-  "/:postId",
+  "/:postId", // NEED TO EDIT ROUTE TO AVOID CLASHING WITH ABOVE ROUTE
 
   body("content", "Content required").trim().isLength({ min: 1 }).escape(),
 
@@ -195,6 +210,7 @@ router.put(
     }
   }
 );
+*/
 
 // PUT toggle like post
 

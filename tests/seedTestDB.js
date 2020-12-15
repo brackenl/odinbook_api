@@ -47,14 +47,14 @@ const generateUser = () => {
 
 const generateFriends = () => {
   users.forEach((user) => {
-    // console.log("user: ", user._id);
+    // ("user: ", user._id);
     const usersExcCurrentUser = users.filter((item) => item._id != user._id);
     const shuffledUsers = shuffleArray(usersExcCurrentUser);
     const randSlicedUsers = shuffledUsers.slice(0, 1);
-    // console.log("sliced random users: ", randSlicedUsers);
+    // ("sliced random users: ", randSlicedUsers);
 
     user.friends = randSlicedUsers.map((user) => user._id);
-    // console.log("user's friends: ", user.friends);
+    // ("user's friends: ", user.friends);
 
     randSlicedUsers.forEach((friendedUser) => {
       if (!friendedUser.friends.includes(user._id)) {
@@ -62,7 +62,7 @@ const generateFriends = () => {
           (user) => user._id == friendedUser._id
         );
         users[relIndex].friends.push(user._id);
-        // console.log("friended user's friends: ", users[relIndex].friends);
+        // ("friended user's friends: ", users[relIndex].friends);
       }
     });
   });
@@ -140,7 +140,7 @@ const seedDB = async () => {
     try {
       await user.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   }
 
@@ -148,7 +148,7 @@ const seedDB = async () => {
     try {
       await post.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   }
 
@@ -156,7 +156,7 @@ const seedDB = async () => {
     try {
       await comment.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   }
   /*
@@ -164,7 +164,7 @@ const seedDB = async () => {
     try {
       await user.save();
     } catch (e) {
-      console.log(e);
+      (e);
     }
   });
 
@@ -172,7 +172,7 @@ const seedDB = async () => {
     try {
       await post.save();
     } catch (e) {
-      console.log(e);
+      (e);
     }
   });
 
@@ -180,11 +180,11 @@ const seedDB = async () => {
     try {
       await comment.save();
     } catch (e) {
-      console.log(e);
+      (e);
     }
   });
   */
-  // console.log(users);
+  // (users);
   return { users, posts, comments };
 };
 
@@ -201,9 +201,9 @@ addLikesToPosts();
 addCommentsToPosts();
 addLikesToComments();
 
-console.log("users: ", users);
-console.log("posts: ", posts);
-console.log("comments: ", comments);
+("users: ", users);
+("posts: ", posts);
+("comments: ", comments);
 */
 
 module.exports = seedDB;

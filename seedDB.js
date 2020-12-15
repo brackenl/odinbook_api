@@ -36,14 +36,14 @@ const generateUser = () => {
 
 const generateFriends = () => {
   users.forEach((user) => {
-    console.log("user: ", user._id);
+    "user: ", user._id;
     const usersExcCurrentUser = users.filter((item) => item._id != user._id);
     const shuffledUsers = shuffleArray(usersExcCurrentUser);
     const randSlicedUsers = shuffledUsers.slice(0, 1);
-    console.log("sliced random users: ", randSlicedUsers);
+    "sliced random users: ", randSlicedUsers;
 
     user.friends = randSlicedUsers.map((user) => user._id);
-    console.log("user's friends: ", user.friends);
+    "user's friends: ", user.friends;
 
     user.friends.forEach((friendedUser) => {
       const relIndex = users.findIndex((user) => user._id == friendedUser);
@@ -134,7 +134,7 @@ const seedDB = () => {
     try {
       await user.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   });
 
@@ -142,7 +142,7 @@ const seedDB = () => {
     try {
       await post.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   });
 
@@ -150,7 +150,7 @@ const seedDB = () => {
     try {
       await comment.save();
     } catch (e) {
-      console.log(e);
+      e;
     }
   });
 
@@ -158,23 +158,5 @@ const seedDB = () => {
 };
 
 seedDB();
-
-/*
-// GENERATE
-
-for (let i = 0; i < 50; i++) {
-  generateUser();
-}
-
-generateFriends();
-addPosts();
-addLikesToPosts();
-addCommentsToPosts();
-addLikesToComments();
-
-console.log("users: ", users);
-console.log("posts: ", posts);
-console.log("comments: ", comments);
-*/
 
 module.exports = seedDB;

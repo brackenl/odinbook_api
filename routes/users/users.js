@@ -70,7 +70,6 @@ router.post(
     if (foundUser) {
       return res.status(201).json({ message: "User found", user: foundUser });
     } else {
-      console.log("not found");
       return res
         .status(200)
         .json({ message: "User not found", error: "User not found" });
@@ -83,7 +82,6 @@ router.get(
   "/:userId",
 
   async (req, res, next) => {
-    console.log(req.payload, req.user);
     try {
       const user = await User.findById(req.params.userId)
         .populate("friends")
@@ -183,7 +181,7 @@ router.post(
       const user = await User.findById(req.payload.id);
 
       user.profilePicUrl = req.file
-        ? "http://localhost:3000/public/images/" + req.file.filename
+        ? `${process.env.BASE_URI}/public/images/` + req.file.filename
         : null;
 
       const updatedUser = await user.save();
