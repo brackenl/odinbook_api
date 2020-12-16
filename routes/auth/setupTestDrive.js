@@ -2,6 +2,8 @@ require("dotenv").config();
 var faker = require("faker");
 
 var User = require("../../models/user");
+var Comment = require("../../models/comment");
+var Post = require("../../models/post");
 
 require("../../utils/mongoConfig");
 
@@ -22,7 +24,21 @@ const setupTestDrive = async () => {
 
   if (oldUser) {
     otherUsers = await User.find({ _id: { $ne: oldUser._id } });
+    await Post.deleteMany({ author: oldUser._id });
+    await Comment.deleteMany({
+      user: oldUser._id,
+    });
     await User.findByIdAndDelete(oldUser._id);
+
+    for (user of otherUsers) {
+      const updatedFriends = user.friends.filter((id) => id !== oldUser._id);
+      const updatedFriendRequests = user.friendRequests.filter(
+        (id) => id !== oldUser._id
+      );
+      user.friends = updatedFriends;
+      user.friendRequests = updatedFriendRequests;
+      await user.save();
+    }
   } else {
     otherUsers = await User.find({});
   }
