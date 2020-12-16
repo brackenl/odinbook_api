@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3030",
+    origin: "https://brackenl.github.io/",
   })
 );
 app.use(compression());
