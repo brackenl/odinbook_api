@@ -118,9 +118,13 @@ router.put(
       relUser.friends = updatedRelUserFriends;
       await relUser.save();
 
+      const populatedUser = await User.findById(updatedUser._id).populate(
+        "friends"
+      );
+
       return res
         .status(201)
-        .json({ message: "Friend request accepted", user: updatedUser });
+        .json({ message: "Friend request accepted", user: populatedUser });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
