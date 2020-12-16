@@ -12,6 +12,8 @@ var friendsRouter = require("./friends");
 const { issueJWT, generatePassword } = require("../../utils/utils");
 
 var User = require("../../models/user");
+var Post = require("../../models/post");
+var Comment = require("../../models/comment");
 
 router.use("/friends", friendsRouter);
 
@@ -199,6 +201,7 @@ router.post(
 // DELETE user account
 
 router.delete(`/:userId`, async (req, res, next) => {
+  console.log(req.params.userId, req.payload.id);
   if (req.params.userId !== req.payload.id) {
     return res
       .status(401)
@@ -206,6 +209,10 @@ router.delete(`/:userId`, async (req, res, next) => {
   }
 
   const deletedUser = await User.findByIdAndDelete(req.params.userId);
+  const deletedUserPosts = await Post.deleteMany({ author: req.params.userId });
+  const deletedUserComments = await Comment.deleteMany({
+    user: req.params.userId,
+  });
   const otherUsers = await User.find({ _id: { $ne: req.params.userId } });
 
   if (!deletedUser) {
@@ -216,7 +223,11 @@ router.delete(`/:userId`, async (req, res, next) => {
     const updatedFriends = user.friends.filter(
       (id) => id !== req.params.userId
     );
+    const updatedFriendRequests = user.friendRequests.filter(
+      (id) => id !== req.params.userId
+    );
     user.friends = updatedFriends;
+    user.friendRequests = updatedFriendRequests;
     await user.save();
   }
 

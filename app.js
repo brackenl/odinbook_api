@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "http://localhost:3030",
   })
 );
 app.use(compression());
@@ -31,7 +31,6 @@ app.use(passport.session());
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// set up routes
 app.use("/api", indexRouter);
 
 module.exports = app;

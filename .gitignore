@@ -120,5 +120,4 @@ sslcert/
 *.pem
 
 # misc
-public/images
 friendUpdate.js
