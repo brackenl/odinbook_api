@@ -88,7 +88,7 @@ router.get("/:id", async (req, res, next) => {
 router.post(
   "/",
 
-  body("content", "Content required").trim().isLength({ min: 1 }).escape(),
+  body("content", "Content required").trim().isLength({ min: 1 }),
 
   async (req, res, next) => {
     const { content } = req.body;

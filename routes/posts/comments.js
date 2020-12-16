@@ -19,7 +19,7 @@ router.use(getTokenData);
 router.post(
   "/",
 
-  body("comment", "Comment required").trim().isLength({ min: 1 }).escape(),
+  body("comment", "Comment required").trim().isLength({ min: 1 }),
 
   async (req, res, next) => {
     const { comment } = req.body;
